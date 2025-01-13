@@ -1,0 +1,41 @@
+name: PHP CI Workflow
+
+# Déclencheurs qui vont activer ce workflow
+on:
+  push:
+    branches:
+      - main      # Ce workflow sera lancé à chaque push sur la branche 'main'
+  pull_request:
+    branches:
+      - main      # Et aussi lors de la création d'une pull request vers la branche 'main'
+
+jobs:
+  # Définition du job 'build', qui va être exécuté sur une machine virtuelle
+  build:
+    runs-on: ubuntu-latest  # L'outil de CI utilise une machine virtuelle avec Ubuntu
+
+    steps:
+    # Étape 1 : Récupérer le code source
+    - name: Checkout code
+      uses: actions/checkout@v2  # Utilisation de l'action pour récupérer le code du dépôt
+
+    # Étape 2 : Configurer PHP
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2  # Action pour configurer PHP
+      with:
+        php-version: '7.4'  # Spécifie la version de PHP que tu utilises
+
+    # Étape 3 : Installer les dépendances (ex : composer pour les bibliothèques PHP)
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y php-cli php-mbstring php-xml php-curl php-zip  # Dépendances PHP communes
+        curl -sS https://getcomposer.org/installer | php  # Installe Composer (si tu en as besoin pour gérer les dépendances PHP)
+        php composer.phar install  # Si tu utilises Composer pour gérer les packages PHP
+
+    # Étape 4 : Exécuter les tests unitaires (si tu en as)
+    - name: Run tests
+      run: |
+        echo "Tests en cours..."  # Remplace cette ligne par tes commandes de tests
+        # Exemple de commande de tests, selon ce que tu utilises :
+        # ./vendor/bin/phpunit  # Si tu utilises PHPUnit pour les tests PHP
